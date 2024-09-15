@@ -4,12 +4,15 @@ import './dataGridStyles.css';
 import { setLocationParam } from 'src/utils/dom';
 import { Param } from 'src/enums/Param';
 import { useLocationParam } from 'src/hooks/useLocationParam';
+import { httpClient } from 'src/services/httpClient';
+import { DataGridProps } from 'src/interfaces/DataGridProps';
+import { TaskDataGridElement, TaskElement } from 'src/interfaces/TaskDataGridElement';
 
 const SequentialPaginationButton = React.memo<{
 	isLeft?: boolean;
-	pages: number;
 	disabled: boolean;
-}>(({ pages, disabled, isLeft = false }) => {
+	onRequestLastPage?: DataGridProps<TaskDataGridElement>['onRequestLastPage'];
+}>(({ disabled, onRequestLastPage, isLeft = false }) => {
 	const handleClick = React.useCallback(() => {
 		if (disabled) {
 			return;
@@ -18,9 +21,10 @@ const SequentialPaginationButton = React.memo<{
 		if (isLeft) {
 			setLocationParam(Param.Page, '1');
 		} else {
-			setLocationParam(Param.Page, String(pages));
+			// setLocationParam(Param.Page, String(pages));
+			onRequestLastPage?.();
 		}
-	}, [disabled]);
+	}, [disabled, onRequestLastPage]);
 
 	return (
 		<div
@@ -34,7 +38,7 @@ const SequentialPaginationButton = React.memo<{
 	);
 });
 
-export const DataGridPagination = React.memo<DataGridPaginationProps>(({ pages }) => {
+export const DataGridPagination = React.memo<DataGridPaginationProps>(({ buttonsToRight, onRequestLastPage }) => {
 	const [currentPage, setCurrentPage] = React.useState(0);
 	const page = useLocationParam(Param.Page);
 
@@ -52,15 +56,19 @@ export const DataGridPagination = React.memo<DataGridPaginationProps>(({ pages }
 	}, [page]);
 
 	const buttons = React.useMemo(() => {
-		const BUTTONS_COUNT = 5;
+		const buttonsToLeftMap = {
+			4: 0,
+			3: 1,
+			2: 2,
+		};
 
-		const res = Array.from({ length: BUTTONS_COUNT }, (_, index) => {
+		const buttonsToLeft = buttonsToLeftMap[buttonsToRight as keyof typeof buttonsToLeftMap] ?? 2;
+
+		const buttonsCount = buttonsToLeft + buttonsToRight + 1;
+
+		const res = Array.from({ length: buttonsCount }, (_, index) => {
 			if (currentPage >= 3) {
 				index = currentPage - 2 + index;
-			}
-
-			if (pages !== 1 && index > pages - 1) {
-				return null;
 			}
 
 			return (
@@ -83,21 +91,20 @@ export const DataGridPagination = React.memo<DataGridPaginationProps>(({ pages }
 			<SequentialPaginationButton
 				key={'sequentialPaginationButton-left'}
 				isLeft
-				pages={pages}
-				disabled={currentPage <= 0 || !pages}
+				disabled={currentPage <= 0}
 			/>,
 		);
 
 		res.push(
 			<SequentialPaginationButton
 				key={'sequentialPaginationButton-right'}
-				pages={pages}
-				disabled={currentPage + 1 === pages || !pages}
+				disabled={!buttonsToRight}
+				onRequestLastPage={onRequestLastPage}
 			/>,
 		);
 
 		return res;
-	}, [currentPage, pages]);
+	}, [currentPage, buttonsToRight]);
 
 	return <div className={'paginationContainer'}>{buttons}</div>;
 });

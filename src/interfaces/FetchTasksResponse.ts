@@ -2,13 +2,13 @@ import { TaskDataGridElement } from './TaskDataGridElement';
 
 interface FetchTasksResponseWithData {
 	tasks: TaskDataGridElement[];
-	count: number;
+	buttonsToRight: number;
 	redirect?: never;
 }
 
 interface FetchTasksResponseWithRedirect {
 	tasks?: never;
-	count?: never;
+	buttonsToRight?: never;
 	redirect: boolean;
 }
 

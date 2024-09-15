@@ -1,3 +1,6 @@
+import { DataGridProps } from './DataGridProps';
+
 export interface DataGridPaginationProps {
-	pages: number;
+	buttonsToRight: number;
+	onRequestLastPage: DataGridProps<unknown>['onRequestLastPage'];
 }

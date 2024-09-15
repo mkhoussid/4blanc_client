@@ -13,23 +13,24 @@ import { generateRequestUrl } from 'src/services/httpClient/utils';
 import { setLocationParam } from 'src/utils/dom';
 
 export const Landing = React.memo(() => {
-	const [count, setCount] = React.useState<number>(0);
 	const [data, setData] = React.useState<TaskDataGridElement[]>([]);
+	const [buttonsToRight, setButtonsToRight] = React.useState(0);
 
 	const page = useLocationParam(Param.Page);
 	const taskSearchQuery = useLocationParam(Param.TaskSearchQuery);
 
 	const fetchTasks = React.useCallback(
 		({ page, taskSearchQuery }: { page: string; taskSearchQuery: string | null }) => {
+			console.log('page..', page);
 			httpClient({
 				url: generateRequestUrl(Entity.Task),
 				params: { page, [Param.TaskSearchQuery]: taskSearchQuery },
-				onSuccess: ({ tasks, count, redirect }: FetchTasksResponse) => {
+				onSuccess: ({ tasks, redirect, buttonsToRight }: FetchTasksResponse) => {
 					if (redirect) {
 						setLocationParam(Param.Page, '1');
 					} else {
 						setData(tasks as TaskDataGridElement[]);
-						setCount(count as number);
+						setButtonsToRight(buttonsToRight as number);
 					}
 				},
 				onFail: (err) => {
@@ -52,10 +53,20 @@ export const Landing = React.memo(() => {
 		setLocationParam(Param.TaskId, String(item.id));
 	}, []);
 
+	const handleRequestLastPage = React.useCallback(() => {
+		fetchTasks({ page: 'end', taskSearchQuery });
+	}, [taskSearchQuery]);
+
 	return (
 		<>
 			<SearchInput />
-			<DataGrid data={data} columns={taskColumns} onRowClick={handleRowClick} count={count} />
+			<DataGrid
+				data={data}
+				columns={taskColumns}
+				onRowClick={handleRowClick}
+				buttonsToRight={buttonsToRight}
+				onRequestLastPage={handleRequestLastPage}
+			/>
 			<TaskModal />
 		</>
 	);
