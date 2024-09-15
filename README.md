@@ -3,5 +3,5 @@
 First clone, then run:
 
 ```
-npm ci && npm run build && npm start
+npm ci && npm run dev
 ```
