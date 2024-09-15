@@ -1,0 +1,109 @@
+.dataGrid {
+	padding: 24px;
+	background-color: rgba(255, 255, 255, 1);
+	width: 100%;
+}
+
+.dataGrid .innerContainer {
+	border-collapse: collapse;
+	border: none;
+	width: 100%;
+}
+
+.dataGrid .emptyListContainer {
+	margin-top: 8px;
+	margin-left: 8px;
+	font-style: italic;
+}
+
+.dataGrid .headerContainer {
+	border-bottom: 1px solid rgba(34, 37, 43, 0.12);
+}
+
+.dataGrid .header {
+	padding: 12px;
+	text-align: left;
+	color: #2c3e50;
+	border-right: 1px solid rgba(34, 37, 43, 0.12);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	&:first-of-type {
+		border-top-left-radius: 12px;
+	}
+
+	&:last-child {
+		border-top-right-radius: 12px;
+		border-right: none;
+	}
+}
+
+.dataGrid .dataGridRow {
+	cursor: pointer;
+	transition: background-color 0.3s ease-in-out;
+
+	&:hover {
+		background-color: #605f5f;
+	}
+
+	&:last-child {
+		border-bottom-left-radius: 12px;
+		border-bottom-right-radius: 12px;
+	}
+
+	&:not(last-child) {
+		border-bottom: 1px solid rgba(34, 37, 43, 0.12);
+	}
+}
+
+.dataGrid .dataGridColumn {
+	padding: 12px;
+	font-size: 14px;
+	color: rgba(24, 27, 43, 1);
+}
+
+.paginationContainer {
+	margin-top: 8px;
+	display: flex;
+	gap: 2px;
+}
+
+.paginationContainer .paginationButton {
+	border: 2px solid #605f5f;
+	border-radius: 50%;
+	padding: 8px;
+	min-width: 16px;
+	width: 16px;
+	height: 16px;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	user-select: none;
+
+	&:not(.paginationButtonDisabled):hover {
+		transition: background-color 0.3s ease-in-out;
+		background-color: #605f5f;
+		color: #ffffff;
+		border-color: #000000;
+	}
+}
+
+.paginationContainer .paginationButtonActive {
+	background-color: #605f5f;
+	color: #ffffff;
+
+	&:not(.paginationButtonDisabled):hover {
+		background-color: #c4c4c4;
+		color: #000000;
+		border-color: #605f5f;
+	}
+}
+
+.paginationContainer .paginationButtonDisabled {
+	cursor: not-allowed;
+	background-color: #8d8c8c;
+	color: #ffffff;
+}
