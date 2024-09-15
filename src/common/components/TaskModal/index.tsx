@@ -10,6 +10,7 @@ import { TaskElement } from 'src/interfaces/TaskDataGridElement';
 import { setLocationParam } from 'src/utils/dom';
 import { Param } from 'src/enums/Param';
 import { formatDate } from 'src/utils/date';
+import { getCachedTask, setCachedTask } from 'src/utils/storage';
 
 const fieldMatrixMap: Partial<Record<keyof TaskElement, string>> = {
 	title: 'Заголовок',
@@ -37,15 +38,24 @@ export const TaskModal = React.memo(() => {
 
 	React.useEffect(() => {
 		if (taskId) {
-			httpClient({
-				url: generateRequestUrl(Entity.Task, taskId),
-				onSuccess: (data) => {
-					setTask((data as { task: TaskElement }).task);
-				},
-				onFail: (err) => {
-					console.log(err);
-				},
-			});
+			const cachedTask = getCachedTask(taskId);
+
+			if (cachedTask) {
+				setTask(cachedTask);
+			} else {
+				httpClient({
+					url: generateRequestUrl(Entity.Task, taskId),
+					onSuccess: (data) => {
+						const task = (data as { task: TaskElement }).task;
+
+						setTask(task);
+						setCachedTask(task);
+					},
+					onFail: (err) => {
+						console.log(err);
+					},
+				});
+			}
 		}
 	}, [taskId]);
 
